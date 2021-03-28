@@ -57,7 +57,7 @@ functions:
     handler: get_price_worker.getPrice
     events:
       # Invoke Lambda function every hour
-      - schedule: rate(12 hours)
+      - schedule: rate(1 minute)
 
 resources: # CloudFormation template syntax from here on.
   Resources:
