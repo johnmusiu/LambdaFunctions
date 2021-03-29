@@ -37,6 +37,7 @@ provider:
         - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
+        - dynamodb:UpdateItem
       Resource: "*"
 
 # you can define service wide environment variables here
@@ -52,6 +53,7 @@ functions:
       - http:
           path: price
           method: get
+          cors: true
 
   getPriceHandler:
     handler: get_price_worker.getPrice
@@ -71,13 +73,9 @@ resources: # CloudFormation template syntax from here on.
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: created_at
-            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-          - AttributeName: created_at
-            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
