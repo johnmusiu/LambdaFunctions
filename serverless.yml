@@ -29,7 +29,7 @@ provider:
   stage: dev
   region: us-east-1
 
-# you can add statements to the Lambda function's IAM Role here
+  # you can add statements to the Lambda function's IAM Role here
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -55,22 +55,29 @@ functions:
 
   getPriceHandler:
     handler: get_price_worker.getPrice
+    memorySize: 512
+    description: Get latest bitcoin price from bitfinex.
     events:
-      # Invoke Lambda function every hour
-      - schedule: rate(1 minute)
+      # Invoke Lambda function every 12 hours
+      # Avoids exhausting free-tier resources by reducing hits to lambda functions
+      - schedule: rate(12 hours)
 
 resources: # CloudFormation template syntax from here on.
   Resources:
     priceTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: price_table
+        TableName: prices_table
         AttributeDefinitions:
           - AttributeName: id
+            AttributeType: S
+          - AttributeName: created_at
             AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+          - AttributeName: created_at
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

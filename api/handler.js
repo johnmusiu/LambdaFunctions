@@ -7,7 +7,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 module.exports.price = (event, context, callback) => {
   let params = {
-    TableName: "price_table",
+    TableName: "prices_table",
     ProjectExpression: "price",
     ScanIndexForward: false,
     Limit: 1,
@@ -15,9 +15,13 @@ module.exports.price = (event, context, callback) => {
 
   const onScan = (err, data) => {
     if (err) {
-      console.log(JSON.stringify(err));
-
-      callback(JSON.stringify(err));
+      return callback(null, {
+        error: JSON.stringify(err),
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET",
+        },
+      });
     } else {
       console.log(data);
       return callback(null, {
